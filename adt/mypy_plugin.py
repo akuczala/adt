@@ -292,7 +292,7 @@ def _add_match(context: ClassDefContext, cases: Iterable[_CaseDef]) -> None:
     _add_method(context,
                 name='match',
                 args=matchArgs,
-                return_type=mypy.types.TypeVarType(matchResultType),
+                return_type=matchResultType,
                 tvar_def=matchResultType)
 
 
@@ -317,7 +317,7 @@ def _callable_type_for_adt_case(context: ClassDefContext, case: _CaseDef,
                                 resultType: mypy.types.TypeVarType
                                 ) -> mypy.types.CallableType:
     callableType = case.match_lambda(
-        return_type=mypy.types.TypeVarType(resultType))
+        return_type=resultType)
     callableType.variables = [resultType]
     return callableType
 
