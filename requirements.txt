@@ -1,5 +1,5 @@
 yapf==0.27.0
-mypy
-coverage
-hypothesis
-coveralls
+mypy==0.942
+coverage==6.3.2
+hypothesis==6.41.0
+coveralls==3.3.1
