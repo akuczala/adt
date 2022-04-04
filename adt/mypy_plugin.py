@@ -144,7 +144,7 @@ class _CaseDef:
         else:
             return mypy.types.TupleType(
                 list(self.types),
-                self.context.api.named_type('__builtins__.tuple'))
+                self.context.api.named_type('builtins.tuple'))
 
     def match_lambda(self,
                      return_type: mypy.types.Type) -> mypy.types.CallableType:
@@ -153,7 +153,7 @@ class _CaseDef:
 
         return mypy.types.CallableType(
             self.types, argKinds, argNames, return_type,
-            self.context.api.named_type('__builtins__.function'))
+            self.context.api.named_type('builtins.function'))
 
     def __hash__(self) -> int:
         return hash(self.name)
@@ -299,22 +299,22 @@ def _add_match(context: ClassDefContext, cases: Iterable[_CaseDef]) -> None:
 # Generates a new, unique, unbounded type variable and defines it within the
 # body of the given class.
 def _add_typevar(context: ClassDefContext,
-                 tVarName: str) -> mypy.types.TypeVarDef:
+                 tVarName: str) -> mypy.types.TypeVarType:
     typeInfo = context.cls.info
     tVarQualifiedName = f'{get_fullname(typeInfo)}.{tVarName}'
-    objectType = context.api.named_type('__builtins__.object')
+    objectType = context.api.named_type('builtins.object')
 
     tVarExpr = TypeVarExpr(tVarName, tVarQualifiedName, [], objectType)
     typeInfo.names[tVarName] = SymbolTableNode(MDEF, tVarExpr)
 
-    return mypy.types.TypeVarDef(tVarName, tVarQualifiedName, -1, [],
+    return mypy.types.TypeVarType(tVarName, tVarQualifiedName, -1, [],
                                  objectType)
 
 
 # Determines the Callable type appropriate for destructuring the ADT case
 # described by `case`.
 def _callable_type_for_adt_case(context: ClassDefContext, case: _CaseDef,
-                                resultType: mypy.types.TypeVarDef
+                                resultType: mypy.types.TypeVarType
                                 ) -> mypy.types.CallableType:
     callableType = case.match_lambda(
         return_type=mypy.types.TypeVarType(resultType))
@@ -332,7 +332,7 @@ def _add_method(
         args: List[Argument],
         return_type: mypy.types.Type,
         self_type: Optional[mypy.types.Type] = None,
-        tvar_def: Optional[mypy.types.TypeVarDef] = None,
+        tvar_def: Optional[mypy.types.TypeVarType] = None,
         is_classmethod: bool = False,
 ) -> None:
     """Adds a new method to a class.
@@ -360,7 +360,7 @@ def _add_method(
 
     args = [first] + args
 
-    function_type = ctx.api.named_type('__builtins__.function')
+    function_type = ctx.api.named_type('builtins.function')
 
     arg_types, arg_names, arg_kinds = [], [], []
     for arg in args:
